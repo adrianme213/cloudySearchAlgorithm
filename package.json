@@ -4,7 +4,9 @@
   "description": "cloudy search algorithm to filter list of transactions",
   "main": "index.js",
   "scripts": {
-    "rest-server": "json-server server/db.json"
+    "build": "webpack -w --config webpack.config.js",
+    "db-server": "json-server server/db.json",
+    "start": "nodemon server/index.js"
   },
   "repository": {
     "type": "git",
