@@ -1,9 +1,9 @@
 import React from 'react';
 
-const Search = ({}) => (
+const Search = ({updateSearch}) => (
   <div>
-    <input onKeyUp={()=>{console.log('keyup')}} className="" type="text" />
-    <button onClick={()=>{console.log('clicked')}} className="">Search</button>
+    <input onKeyUp={updateSearch} id="search-input" type="text" />
+    <button onClick={updateSearch} className="">Search</button>
   </div>
 );
 

@@ -11,8 +11,14 @@ class App extends React.Component {
     super(props);
     this.state = {
       loading: true,
+      query: '',
+      filteredTransactions: [{}],
       transactions: [{}]
     }
+    this.fetchTransactionData = this.fetchTransactionData.bind(this);
+    this.arrangeTransactionByDate = this.arrangeTransactionByDate.bind(this);
+    this.updateTransactionsByQuery = this.updateTransactionsByQuery.bind(this);
+    this.updateSearch = this.updateSearch.bind(this);
   }
 
   componentDidMount() {
@@ -22,11 +28,10 @@ class App extends React.Component {
   fetchTransactionData() {
     axios.get(DB_URL)
       .then(res => {
-        const sortedData = this.arrangeTransactionByDate(res.data);
         this.setState({
-          transactions: sortedData,
+          transactions: res.data,
           loading: false
-        });
+        }, () => { this.updateSearch(); });
         console.log('STATE ', this.state)
       })
       .catch(err => {
@@ -36,7 +41,6 @@ class App extends React.Component {
 
   arrangeTransactionByDate(arr) {
     let result = arr.slice();
-
     // Helper Function
     const convertIsoDateToNum = (date) => {
       const dateTime = date.split('T')
@@ -48,7 +52,6 @@ class App extends React.Component {
       const number = Number(`${yearMonthDay}${timeAsNumber}`);
       return number;
     };
-
     // Sorting by Date
     result.sort((one, two) => {
       return convertIsoDateToNum(two.date) - convertIsoDateToNum(one.date);
@@ -56,14 +59,33 @@ class App extends React.Component {
     return result;
   }
 
+  updateTransactionsByQuery(query) {
+    if (query === '') { return this.state.transactions; }
+    let filteredArray = this.state.transactions;
+    filteredArray = filteredArray.filter((item) => {
+      const condensedData = `${item.amount}${item.date}${item.card_last_four}`;
+      return condensedData.includes(query);
+    });
+    return filteredArray;
+  }
+
+  updateSearch(e) {
+    const query = document.getElementById('search-input').value
+    this.setState({query}, () => {
+      const filteredArray = this.updateTransactionsByQuery(query);
+      const filteredAndByDateArray = this.arrangeTransactionByDate(filteredArray);
+      this.setState({filteredTransactions: filteredAndByDateArray});
+    });
+  }
+
   render() {
     return (
       <div>
-        Hello from App JSX
-        <Search />
+        Cloudy Search Algorithm
+        <Search updateSearch={this.updateSearch}/>
         {this.state.loading ?
           <h6>Loading True</h6>:
-          <TransactionList data={this.state.transactions}/>
+          <TransactionList data={this.state.filteredTransactions}/>
         }
       </div>
     );
