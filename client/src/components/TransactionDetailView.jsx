@@ -1,11 +1,17 @@
 import React from 'react';
 
+import {displayDateTime, displayAmount} from '../helpers/helpers';
+
 const TransactionDetailView = ({transaction}) => (
-  <div>
-    <h3>{transaction.amount}</h3>
-    <p>{transaction.date}</p>
-    <p>{transaction.card_last_four}</p>
-  </div>
+  <tr>
+    <td>
+      <i className="calendar icon"></i>{displayDateTime(transaction.date)}
+    </td>
+    <td>{`$${displayAmount(transaction.amount)}`}</td>
+    <td>{transaction.card_last_four}</td>
+    {}
+  </tr>
+
 );
 
 export default TransactionDetailView;
