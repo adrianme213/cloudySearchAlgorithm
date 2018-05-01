@@ -1,1 +1,8 @@
 @import './semantic/semantic/semantic.min.css';
+
+.ui.search {
+  width: 50%;
+}
+.ui.icon.input {
+  width: 100%;
+}
