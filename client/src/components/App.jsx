@@ -3,6 +3,7 @@ import axios from 'axios';
 
 import Search from './Search';
 import TransactionList from './TransactionList';
+import {convertIsoDateToNum, displayAmount} from '../helpers/helpers';
 
 const DB_URL = `http://localhost:3000/transactions`;
 
@@ -32,7 +33,6 @@ class App extends React.Component {
           transactions: res.data,
           loading: false
         }, () => { this.updateSearch(); });
-        console.log('STATE ', this.state)
       })
       .catch(err => {
         console.log('Error in GET: ', err);
@@ -41,18 +41,6 @@ class App extends React.Component {
 
   arrangeTransactionByDate(arr) {
     let result = arr.slice();
-    // Helper Function
-    const convertIsoDateToNum = (date) => {
-      const dateTime = date.split('T')
-      const yearMonthDay = dateTime[0].split('-').reverse().join('');
-      let timeAsNumber = dateTime[1].split(':').join('');
-      while (timeAsNumber.length < 4) {
-        timeAsNumber = '0' + timeAsNumber;
-      }
-      const number = Number(`${yearMonthDay}${timeAsNumber}`);
-      return number;
-    };
-    // Sorting by Date
     result.sort((one, two) => {
       return convertIsoDateToNum(two.date) - convertIsoDateToNum(one.date);
     });
@@ -61,7 +49,13 @@ class App extends React.Component {
 
   updateTransactionsByQuery(query) {
     if (query === '') { return this.state.transactions; }
-    let filteredArray = this.state.transactions;
+    let filteredArray = this.state.transactions.map(entry => {
+      return {
+        date: entry.date,
+        amount: displayAmount(entry.amount),
+        card_last_four: entry.card_last_four
+      };
+    });
     filteredArray = filteredArray.filter((item) => {
       const condensedData = `${item.amount}${item.date}${item.card_last_four}`;
       return condensedData.includes(query);
@@ -81,12 +75,19 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        Cloudy Search Algorithm
-        <Search updateSearch={this.updateSearch}/>
-        {this.state.loading ?
-          <h6>Loading True</h6>:
-          <TransactionList data={this.state.filteredTransactions}/>
-        }
+        <h1>Cloudy Search Algorithm</h1>
+        <div>
+          <Search updateSearch={this.updateSearch}/>
+          <br />
+          <hr />
+        </div>
+        <div>
+        <br />
+          {this.state.loading ?
+            <h6>Loading True</h6>:
+            <TransactionList data={this.state.filteredTransactions}/>
+          }
+        </div>
       </div>
     );
   }

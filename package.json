@@ -6,6 +6,7 @@
   "scripts": {
     "build": "webpack -w --config webpack.config.js",
     "db-server": "json-server server/db.json",
+    "postinstall": "cd client/dist/semantic && gulp build",
     "start": "nodemon server/index.js"
   },
   "repository": {
@@ -31,6 +32,7 @@
   "dependencies": {
     "axios": "^0.18.0",
     "react": "^16.3.2",
-    "react-dom": "^16.3.2"
+    "react-dom": "^16.3.2",
+    "semantic-ui": "^2.3.1"
   }
 }
