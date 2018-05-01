@@ -1,8 +1,10 @@
 import React from 'react';
 import axios from 'axios';
+import _ from 'lodash';
 
 import Search from './Search';
 import TransactionList from './TransactionList';
+import NoResults from './NoResults';
 import {convertIsoDateToNum, displayAmount} from '../helpers/helpers';
 
 const DB_URL = `http://localhost:3000/transactions`;
@@ -20,6 +22,7 @@ class App extends React.Component {
     this.arrangeTransactionByDate = this.arrangeTransactionByDate.bind(this);
     this.updateTransactionsByQuery = this.updateTransactionsByQuery.bind(this);
     this.updateSearch = this.updateSearch.bind(this);
+    this.clearSearch = this.clearSearch.bind(this);
   }
 
   componentDidMount() {
@@ -57,34 +60,50 @@ class App extends React.Component {
       };
     });
     filteredArray = filteredArray.filter((item) => {
-      const condensedData = `${item.amount}${item.date}${item.card_last_four}`;
-      return condensedData.includes(query);
+      const condensedData = [`${item.amount}`,`${item.date}`,`${item.card_last_four}`];
+      return condensedData[0].includes(query) || condensedData[1].includes(query) || condensedData[2].includes(query);
     });
     return filteredArray;
   }
 
-  updateSearch(e) {
+  updateSearch() {
     const query = document.getElementById('search-input').value
     this.setState({query}, () => {
       const filteredArray = this.updateTransactionsByQuery(query);
       const filteredAndByDateArray = this.arrangeTransactionByDate(filteredArray);
-      this.setState({filteredTransactions: filteredAndByDateArray});
+      if (filteredAndByDateArray.length > 0){
+        this.setState({
+          filteredTransactions: filteredAndByDateArray,
+          loading: false
+        });
+      } else {
+        this.setState({loading: true});
+      }
     });
+  }
+
+  clearSearch() {
+    document.getElementById('search-input').value = '';
+    this.updateSearch();
   }
 
   render() {
     return (
       <div>
         <h1>Cloudy Search Algorithm</h1>
+        <br />
         <div>
-          <Search updateSearch={this.updateSearch}/>
+          <Search
+            updateSearch={_.debounce(this.updateSearch, 500)}
+            clearSearch={this.clearSearch}
+          />
           <br />
           <hr />
         </div>
         <div>
-        <br />
+          <br />
           {this.state.loading ?
-            <h6>Loading True</h6>:
+            <NoResults />:
             <TransactionList data={this.state.filteredTransactions}/>
           }
         </div>
