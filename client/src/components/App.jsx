@@ -43,7 +43,7 @@ class App extends React.Component {
   }
 
   arrangeTransactionByDate(arr) {
-    let result = arr.slice();
+    let result = [...arr];
     result.sort((one, two) => {
       return convertIsoDateToNum(two.date) - convertIsoDateToNum(one.date);
     });
@@ -51,16 +51,9 @@ class App extends React.Component {
   }
 
   updateTransactionsByQuery(query) {
-    if (query === '') { return this.state.transactions; }
-    let filteredArray = this.state.transactions.map(entry => {
-      return {
-        date: entry.date,
-        amount: displayAmount(entry.amount),
-        card_last_four: entry.card_last_four
-      };
-    });
-    filteredArray = filteredArray.filter((item) => {
-      const condensedData = [`${item.amount}`,`${item.date}`,`${item.card_last_four}`];
+    if (query === '') { return [...this.state.transactions]; }
+    const filteredArray = [...this.state.transactions].filter((item) => {
+      const condensedData = [`${displayAmount(item.amount)}`,`${item.date}`,`${item.card_last_four}`];
       return condensedData[0].includes(query) || condensedData[1].includes(query) || condensedData[2].includes(query);
     });
     return filteredArray;

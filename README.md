@@ -17,3 +17,6 @@ Search is dependent on continuous string and can't type in space-separated searc
 ### Example - search for "45." returns:
 { amount: `45.`00, date: '10-02-2018T02:34', card_last_four: '0110' },
 { amount: 13`45.`98, date: '22-06-2017T10:33', card_last_four: '0059' }
+
+## Specs
+Tests have been setup with Jest. To run "npm run test" or detailed list view with tests descriptions "npm run test:detail".
