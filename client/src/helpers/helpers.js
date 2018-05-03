@@ -1,4 +1,6 @@
-export const displayDateTime = (isoDate = '0T0') => {
+export const displayDateTime = (isoDate = 'exit') => {
+  const isoDateTimeRegex = /^[0-3]\d-[01]\d-\d{4}T[0-2]?\d:[0-5]\d$/;
+  if (typeof isoDate !== 'string' || !isoDateTimeRegex.test(isoDate)) { return -1 }
   const dateTime = isoDate.split('T');
   const dayMonthYear = dateTime[0];
   let timeAsNumber = dateTime[1].split(':').join('');
@@ -9,11 +11,14 @@ export const displayDateTime = (isoDate = '0T0') => {
   return `${dayMonthYear} ${timeAsNumber}`;
 }
 
-export const displayAmount = (amount = 1) => {
-  return Number(amount).toFixed(2);
+export const displayAmount = (amount = 'exit') => {
+  if (typeof amount !== 'number') { return -1 }
+  return amount.toFixed(2);
 }
 
-export const convertIsoDateToNum = (date) => {
+export const convertIsoDateToNum = (date = 'exit') => {
+  const isoDateTimeRegex = /^[0-3]\d-[01]\d-\d{4}T[0-2]?\d:[0-5]\d$/;
+  if (typeof date !== 'string' || !isoDateTimeRegex.test(date)) { return -1 }
   const dateTime = date.split('T')
   const yearMonthDay = dateTime[0].split('-').reverse().join('');
   let timeAsNumber = dateTime[1].split(':').join('');
