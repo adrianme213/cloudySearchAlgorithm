@@ -60,7 +60,7 @@ class App extends React.Component {
   }
 
   updateSearch() {
-    const query = document.getElementById('search-input').value
+    const query = document.getElementById('search-input').value;
     this.setState({query}, () => {
       const filteredArray = this.updateTransactionsByQuery(query);
       const filteredAndByDateArray = this.arrangeTransactionByDate(filteredArray);
